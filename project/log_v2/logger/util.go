@@ -47,6 +47,11 @@ func writeLog(level int, format string, args ...interface{}) *LogData {
 	    FileName: fileName,
 	    FuncName: funcName,
         LineNo: lineNo,
+        WarnAndFatal: false,
     }
+	if level == LogLevelError || level == LogLevelWarn || level == LogLevelFatal {
+		logData.WarnAndFatal = true
+	}
 	return logData
+	//fmt.Fprintf(file, "%s %s () %s\n", nowStr, levelStr, fileName, funcName, lineNo, msg)
 }

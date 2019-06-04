@@ -82,7 +82,16 @@ func (f *FileLogger) Init() {
 }
 
 func (f *FileLogger) writeLogBackground() {
-    // todo
+    // 从管道中把取出数据
+    for logData := range f.LogDataChan {
+        var file = f.file
+        if logData.WarnAndFatal {
+            file = f.warnFile
+        }
+        fmt.Fprintf(file, "%s %s (%s:%s:%d) %s\n",
+            logData.TimeStr, logData.LevelStr, logData.FileName,
+            logData.FuncName, logData.LineNo, logData.Message)
+    }
 }
 
 func (f *FileLogger) SetLevel(level int)  {
