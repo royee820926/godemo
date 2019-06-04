@@ -2,33 +2,51 @@ package logger
 
 import (
     "fmt"
-    "os"
     "path"
     "runtime"
     "time"
 )
 
-func GetLineInfo() (fileName string, funcName string, lineNo int) {
-    // skip: 调用层级
-    pc, file, line, ok := runtime.Caller(3)
-    if ok {
-        fileName = file
-        funcName = runtime.FuncForPC(pc).Name()
-        lineNo = line
-    }
-    return
+type LogData struct {
+	Message  string
+	TimeStr  string
+	LevelStr string
+	FileName string
+	FuncName string
+	LineNo   int
+	WarnAndFatal bool
 }
 
-func writeLog(file *os.File, level int, format string, args...interface{}) {
+func GetLineInfo() (fileName string, funcName string, lineNo int) {
+	// skip: 调用层级
+	pc, file, line, ok := runtime.Caller(4)
+	if ok {
+		fileName = file
+		funcName = runtime.FuncForPC(pc).Name()
+		lineNo = line
+	}
+	return
+}
 
-    now := time.Now()
-    nowStr := now.Format("2006-01-02 15:04:05.999")
-    levelStr := getLevelText(level)
+func writeLog(level int, format string, args ...interface{}) *LogData {
 
-    fileName, funcName, lineNo := GetLineInfo()
-    fileName = path.Base(fileName)
-    funcName = path.Base(funcName)
-    msg := fmt.Sprintf(format, args...)
+	now := time.Now()
+	nowStr := now.Format("2006-01-02 15:04:05.999")
+	levelStr := getLevelText(level)
 
-    fmt.Fprintf(file, "%s %s (%s:%s:%d) %s\n", nowStr, levelStr, fileName, funcName, lineNo, msg)
+	fileName, funcName, lineNo := GetLineInfo()
+	fileName = path.Base(fileName)
+	funcName = path.Base(funcName)
+	msg := fmt.Sprintf(format, args...)
+
+	//fmt.Fprintf(file, "%s %s (%s:%s:%d) %s\n", nowStr, levelStr, fileName, funcName, lineNo, msg)
+	logData := &LogData{
+	    Message: msg,
+	    TimeStr: nowStr,
+	    LevelStr: levelStr,
+	    FileName: fileName,
+	    FuncName: funcName,
+        LineNo: lineNo,
+    }
+	return logData
 }
