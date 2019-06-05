@@ -2,7 +2,6 @@ package main
 
 import (
     "project/log_v2/logger"
-    "time"
 )
 
 func main() {
@@ -16,6 +15,9 @@ func initLogger(name, logPath, logName string, level string) (err error) {
     config["log_path"] = logPath
     config["log_name"] = logName
     config["log_level"] = level
+
+    // 切分大小
+    config["log_split_type"] = "size"
 
     // 选择输出到文件或终端
     //err = logger.InitLogger("file", config)
@@ -34,6 +36,6 @@ func initLogger(name, logPath, logName string, level string) (err error) {
 func Run() {
     for {
         logger.Debug("user server is running")
-        time.Sleep(time.Second)
+        //time.Sleep(time.Second)
     }
 }
