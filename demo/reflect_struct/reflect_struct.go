@@ -10,8 +10,11 @@ type Student struct {
     Sex int
     Age int
     Score float32
+    // 注意：
+    // 当通过 reflect.ValueOf(s).field(i)遍历结构体字段时，私有的成员无法被读到，从而报错
     //xxx int
 }
+
 func main() {
     //testStruct()
     testStructPoint()
