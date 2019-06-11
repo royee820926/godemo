@@ -20,20 +20,22 @@ func main() {
 
 func testWrite() {
 	output1 := make(chan string, 10)
-	//go write(output1)
-	output1 <- "hello 1"
-	output1 <- "hello 2"
+	go write(output1)
 
-
-	select {
-	case out1 := <- output1:
-		fmt.Println("for recv:", out1)
-	}
-
-	//for s := range output1 {
-	//	fmt.Println("recv:", s)
-	//	//time.Sleep(time.Second)
+	/******************************/
+	//output1 <- "hello 1"
+	//output1 <- "hello 2"
+	//
+	//select {
+	//case out1 := <- output1:
+	//	fmt.Println("for recv:", out1)
 	//}
+	/******************************/
+
+	for s := range output1 {
+		fmt.Println("recv:", s)
+		//time.Sleep(time.Second)
+	}
 }
 
 func write(ch chan string) {
