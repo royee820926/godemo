@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+</head>
+<body>
+<div>
+    Hello, {{.Name}}
+<!-- with 参数简化 -->
+    {{with .Address}}
+        地址：{{.Province}}
+    {{end}}
+</div>
+<!-- range 循环 -->
+<div>
+    {{with .Score}}
+        <table border="1">
+            <tr>
+                <th>语文</th>
+                <th>数学</th>
+                <th>英语</th>
+            </tr>
+            {{range .}}
+            <tr>
+                <td>{{.Chinese}}</td>
+                <td>{{.Math}}</td>
+                <td>{{.English}}</td>
+            </tr>
+            {{end}}
+        </table>
+    {{end}}
+</div>
+<form action="/login" method="post">
+    <div>用户：<input type="text" name="username"></div>
+    <div>密码：<input type="password" name="password" /></div>
+    <div><input type="submit" value="登录" /></div>
+</form>
+
+</body>
+</html>
