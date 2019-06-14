@@ -12,6 +12,9 @@ var (
     child *bool
 )
 
+/****************
+ * 文件句柄从 父进程 传递到 子进程
+ */
 func main() {
     if child != nil && *child == true {
         fmt.Printf("继承于父进程的文件句柄\n")
@@ -32,7 +35,7 @@ func main() {
     }
 
     startChild(file)
-    fmt.Printf("parent exited")
+    fmt.Printf("parent exited\n")
 }
 
 func init()  {
@@ -57,6 +60,11 @@ func startChild(file *os.File) {
 }
 
 func readFromParent() {
+    // fd = 0: 标准输出
+    // fd = 1: 标准输入
+    // fd = 2: 标准错误输出
+    // fd = 3 =========> ExtraFiles[0]
+    // fd = 4 =========> ExtraFiles[1]
     f := os.NewFile(3, "")
     count := 0
     for {
