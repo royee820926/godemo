@@ -45,6 +45,10 @@ func main() {
     //testUpdateData()
     // 删除记录
     //testDeleteData()
+
+    // prepare预处理
+    //testPrepareData()
+    testPrepareInsertData()
 }
 
 func testQueryData() {
@@ -127,4 +131,63 @@ func testDeleteData() {
         fmt.Printf("get affected rows failed, err:%v\n", err)
     }
     fmt.Printf("delete db succ, Affected rows is %d\n", affectedRows)
+}
+
+func testPrepareData() {
+    sqlstr := "select id,name, age from user where id > ?"
+    stmt, err := DB.Prepare(sqlstr)
+    if err != nil {
+        fmt.Printf("prepare failed, err:%v\n", err)
+        return
+    }
+    defer func() {
+        if stmt != nil {
+            stmt.Close()
+        }
+    }()
+
+    rows, err := stmt.Query(0)
+    // 重点：rows对象一定要close掉
+    defer func() {
+        if rows != nil {
+            rows.Close()
+        }
+    }()
+    if err != nil {
+        fmt.Printf("query failed, err:%v\n", err)
+        return
+    }
+
+    for rows.Next() {
+        var user User
+        err := rows.Scan(&user.Id, &user.Name, &user.Age)
+        if err != nil {
+            fmt.Printf("scan failed, err:%v\n", err)
+            return
+        }
+        fmt.Printf("user:%#v\n", user)
+    }
+}
+
+func testPrepareInsertData() {
+    sqlstr := "insert into user(name, age) values (?, ?)"
+    stmt, err := DB.Prepare(sqlstr)
+    if err != nil {
+        fmt.Printf("insert failed, err:%v\n", err)
+        return
+    }
+    // stmt关闭
+    defer func() {
+        if stmt != nil {
+            stmt.Close()
+        }
+    }()
+    result, err := stmt.Exec("jim", 100)
+
+    id, err := result.LastInsertId()
+    if err != nil {
+        fmt.Printf("get last insert id failed, err:%v\n", err)
+        return
+    }
+    fmt.Printf("id is %d\n", id)
 }
