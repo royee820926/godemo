@@ -48,7 +48,10 @@ func main() {
 
     // prepare预处理
     //testPrepareData()
-    testPrepareInsertData()
+    //testPrepareInsertData()
+
+    // transaction
+    testTrans()
 }
 
 func testQueryData() {
@@ -190,4 +193,37 @@ func testPrepareInsertData() {
         return
     }
     fmt.Printf("id is %d\n", id)
+}
+
+func testTrans() {
+    conn, err := DB.Begin()
+    if err != nil {
+        if conn != nil {
+            conn.Rollback()
+        }
+        fmt.Printf("begin failed, err:%v\n", err)
+        return
+    }
+
+    sqlstr := "update user set age=22 where id= ?"
+    _, err = conn.Exec(sqlstr, 1)
+    if err != nil {
+        conn.Rollback()
+        fmt.Printf("exec sql:%s failed, err:%v\n", sqlstr, err)
+        return
+    }
+
+    sqlstr = "update user set age=102 where id=?"
+    _, err = conn.Exec(sqlstr, 2)
+    if err != nil {
+        conn.Rollback()
+        fmt.Printf("exec sql:%s failed, err:%v\n", sqlstr, err)
+        return
+    }
+    err = conn.Commit()
+    if err != nil {
+        conn.Rollback()
+        fmt.Printf("commit failed, err:%v\n", err)
+        return
+    }
 }
