@@ -2,14 +2,14 @@ package main
 
 import (
     "fmt"
-    "github.com/garyburd/redigo/redis"
+    "github.com/gomodule/redigo/redis"
     "time"
 )
 
 var pool *redis.Pool
 
 func main() {
-    pool = newPool("192.168.99.221:6379", "")
+    pool = newPool("192.168.99.221:6379", "foobared")
     for {
         time.Sleep(time.Second)
         conn := pool.Get()
@@ -48,7 +48,8 @@ func newPool(server, password string) *redis.Pool {
         MaxActive: 1000, // 峰值请求连接数
         IdleTimeout: time.Second * 240, // 空闲连接超时时间
         Dial: func() (redis.Conn, error) {
-            c, err := redis.Dial("tcp", server)
+            c, err := redis.Dial("tcp", server,
+                redis.DialPassword(password))
             if err != nil {
                 return nil, err
             }
