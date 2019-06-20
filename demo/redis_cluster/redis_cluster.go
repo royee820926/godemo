@@ -30,6 +30,6 @@ func main() {
     //    return
     //}
 
-    //cluster.Do("set", "name", "dengjun1111")
+    cluster.Do("AUTH", "foobared")
     cluster.Do("SET", "foo", "bar")
 }
